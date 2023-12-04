@@ -1,0 +1,25 @@
+name: Build and Push Image
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    container:
+      image: quay.io/centos-bootc/builder:latest
+      options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Build
+        run: |
+          rpm-ostree compose image --format=ociarchive \
+          --initialize fedora-bootc.yaml dest.oci-archive
